@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-realtime-importer
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}-realtime-importer
+    spec:
+      nodeSelector:
+          cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: {{ .Chart.Name }}-realtime-importer
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: ["realtime-import"]
+        env:
+{{ include "environment" . | indent 10 }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}

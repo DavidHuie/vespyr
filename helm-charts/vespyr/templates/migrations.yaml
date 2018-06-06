@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "fullname" . }}-migrations-{{ randAlphaNum 5 | lower }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}-migrations
+    spec:
+      nodeSelector:
+          cloud.google.com/gke-nodepool: default-pool
+      activeDeadlineSeconds: 60
+      restartPolicy: Never
+      containers:
+      - name: {{ .Chart.Name }}-migrations
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: ["migrate"]
+        env:
+{{ include "environment" . | indent 10 }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
