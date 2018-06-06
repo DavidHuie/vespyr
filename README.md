@@ -4,7 +4,10 @@ Vespyr is a cryptocurrency trading bot for the GDAX exchange that uses
 technical analysis strategies.
 
 Vespyr continuously saves price information to a Postgres database. It
-then periodically runs a model and executes trades accordingly.
+then periodically runs a model, executing trades accordingly.
+
+Vespyr features genetic optimization in order to find the best
+parameters for each model.
 
 ## Installation
 
